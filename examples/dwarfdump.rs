@@ -18,6 +18,7 @@ use std::mem;
 use std::process;
 use std::result;
 use std::sync::{Condvar, Mutex};
+use std::thread::available_parallelism;
 use typed_arena::Arena;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -93,7 +94,7 @@ where
         result: Ok(()),
         w,
     });
-    let workers = min(max_workers, num_cpus::get());
+    let workers = min(max_workers, available_parallelism()?.get());
     let mut condvars = Vec::new();
     for _ in 0..workers {
         condvars.push(Condvar::new());
